@@ -1,0 +1,209 @@
+openapi: 3.0.0
+info:
+  title: Movies Management Service
+  version: 1.0.0
+paths:
+  /movies:
+    get:
+      summary: Returns list of movies
+      tags:
+        - Movies management
+      responses:
+        '200':
+          description: An array of movies
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MovieWithRating'
+    post:
+      tags:
+        - Movies management
+      summary: Create a new movie
+      responses:
+        '201':
+          description: Movie was successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Movie'
+        '400':
+          $ref: '#/components/responses/badRequest'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewMovie'
+        required: true
+  '/movies/{movieID}':
+    delete:
+      summary: Deletes a specific movie and all its reviews
+      tags:
+        - Movies management
+      parameters:
+        - $ref: '#/components/parameters/movieID'
+      responses:
+        '204':
+          description: Successful Deletion
+  '/movies/{movieID}/review':
+    post:
+      summary: Create a new review for the movie
+      tags:
+        - Movies management
+      parameters:
+        - $ref: '#/components/parameters/movieID'
+      responses:
+        '201':
+          description: Movie review was succesfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Review'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '404':
+          $ref: '#/components/responses/notFound'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewReview'
+        required: true
+components:
+  parameters:
+    movieID:
+      name: movieID
+      in: path
+      description: Movie ID
+      required: true
+      example: 2
+      schema:
+        type: integer
+  responses:
+    badRequest:
+      description: Validation error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    notFound:
+      description: Entity not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    DateTime:
+      type: string
+      pattern: '^([\+-]?\d{4}(?!\d{2}\b))((-?)((0[1-9]|1[0-2])(\3([12]\d|0[1-9]|3[01]))?|W([0-4]\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\d|[12]\d{2}|3([0-5]\d|6[1-6])))([T\s]((([01]\d|2[0-3])((:?)[0-5]\d)?|24\:?00)([\.,]\d+(?!:))?)?(\17[0-5]\d([\.,]\d+)?)?([zZ]|([\+-])([01]\d|2[0-3]):?([0-5]\d)?)?)?)?$'
+      example: '2017-08-21T09:42:28.964Z'
+    NewMovie:
+      type: object
+      properties:
+        title:
+          type: string
+          pattern: '^[a-zA-Z]{3,50}$'
+          example: 'TheWall'
+        director:
+          type: string
+          example: 'Jim Carter'
+        actors:
+          type: array
+          items:
+            type: string
+            example: "Mathew Dan"
+      required:
+        - title
+        - director
+        - actors
+    NewReview:
+      type: object
+      properties:
+        rating:
+          type: integer
+          example: 4
+          minimum: 1
+          maximum: 5
+      required:
+        - rating
+    Movie:
+      type: object
+      properties:
+        id:
+          description: Movie ID
+          type: integer
+          example: 1
+        title:
+          type: string
+          pattern: '^[a-zA-Z]{3,50}$'
+          example: 'TheWall'
+        director:
+          type: string
+          example: 'Jim Carter'
+        actors:
+          type: array
+          items:
+            type: string
+            example: "Mathew Dan"
+        createdAt:
+          $ref: '#/components/schemas/DateTime'
+      required:
+        - id
+        - title
+        - director
+        - actors
+        - createdAt
+    MovieWithRating:
+      allOf:
+        - $ref: '#/components/schemas/Movie'
+        - type: object
+          properties:
+            rating:
+              type: number
+              minimum: 0
+              maximum: 5
+              example: 3.5
+      required:
+        - id
+        - title
+        - rating
+        - director
+        - actors
+        - createdAt
+    Review:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        movieId:
+          type: integer
+          example: 1
+        rating:
+          type: number
+          minimum: 0
+          maximum: 5
+          example: 2
+        createdAt:
+          type: string
+          pattern: '^([\+-]?\d{4}(?!\d{2}\b))((-?)((0[1-9]|1[0-2])(\3([12]\d|0[1-9]|3[01]))?|W([0-4]\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\d|[12]\d{2}|3([0-5]\d|6[1-6])))([T\s]((([01]\d|2[0-3])((:?)[0-5]\d)?|24\:?00)([\.,]\d+(?!:))?)?(\17[0-5]\d([\.,]\d+)?)?([zZ]|([\+-])([01]\d|2[0-3]):?([0-5]\d)?)?)?)?$'
+          example: '2017-08-21T09:42:28.964Z'
+      required:
+        - id
+        - movieId
+        - rating
+        - createdAt
+    Error:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          example: Something went wrong
