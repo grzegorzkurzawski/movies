@@ -23,6 +23,7 @@ libraryDependencies ++= Seq(
   "com.github.tototoshi" %% "slick-joda-mapper" % "2.3.0",
   "joda-time" % "joda-time" % "2.7",
   "org.joda" % "joda-convert" % "1.7",
+  "com.newmotion" %% "akka-rabbitmq" % "5.0.2",
 
   "org.scalatest" %% "scalatest" % "3.0.7" % Test,
   "com.typesafe.akka" %% "akka-http-testkit" % akkaHttpVersion % Test,

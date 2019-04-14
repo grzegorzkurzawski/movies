@@ -1,0 +1,21 @@
+package pl.kurzawski.approving.amqp
+
+import akka.actor.ActorRef
+import com.newmotion.akka.rabbitmq.{BasicProperties, Channel, ChannelActor, CreateChannel, DefaultConsumer, Envelope}
+
+object AmqpUtils {
+
+  def setupConsumer(connectionActor: ActorRef, queue: String, exchange: String, f: Int => Unit): Unit =
+    connectionActor ! CreateChannel(ChannelActor.props(setupSubscriber(queue, exchange, f, _, _)), Some("subscriber"))
+
+  private def setupSubscriber(queue: String, exchange: String, f: Int => Unit, channel: Channel, self: ActorRef) = {
+    channel.queueBind(queue, exchange, "")
+    val consumer = new DefaultConsumer(channel) {
+      override def handleDelivery(consumerTag: String, envelope: Envelope, properties: BasicProperties, body: Array[Byte]) {
+        val number: Int = new String(body).toInt
+        f(number)
+      }
+    }
+    channel.basicConsume(queue, true, consumer)
+  }
+}

@@ -1,12 +1,15 @@
 package pl.kurzawski.management.db
 
 import akka.Done
+import akka.actor.ActorRef
+import com.newmotion.akka.rabbitmq.ChannelMessage
 import com.typesafe.scalalogging.StrictLogging
 import org.joda.time.{DateTime, DateTimeZone}
 import pl.kurzawski.management.db.CustomPostgresProfile.api._
 import pl.kurzawski.management.db.Tables._
 import pl.kurzawski.management.db.model.{MovieRecord, ReviewRecord}
 import pl.kurzawski.management.model.{Movie, Movies, PostMovie, PostReview}
+import pl.kurzawski.management.util.AmqpUtils
 import slick.jdbc.GetResult
 import slick.jdbc.JdbcBackend.Database
 import slick.jdbc.meta.MTable
@@ -15,7 +18,7 @@ import scala.concurrent.duration._
 import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.language.postfixOps
 
-class Repository(val db: Database)(implicit ex: ExecutionContext) extends StrictLogging {
+class Repository(val db: Database, channelActor: ActorRef)(implicit ex: ExecutionContext) extends StrictLogging {
 
   implicit val getMovieResult: GetResult[Movie] =
     GetResult( result =>
@@ -58,7 +61,10 @@ class Repository(val db: Database)(implicit ex: ExecutionContext) extends Strict
   }
 
   def insertReview(review: PostReview, movieId: Int): Future[ReviewRecord] =
-    db.run(reviewTable.returning(reviewTable) += ReviewRecord(0, movieId, review.rating, false))
+    db.run(reviewTable.returning(reviewTable) += ReviewRecord(0, movieId, review.rating, false)).map { review =>
+      channelActor ! ChannelMessage(AmqpUtils.publishInt(_, review.id))
+      review
+    }
 
   def deleteMovie(movieId: Int): Future[Done] =
     db.run(moviesTable.filter(_.id === movieId).delete).map(_ => Done)

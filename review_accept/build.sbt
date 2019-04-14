@@ -11,6 +11,7 @@ libraryDependencies ++= Seq(
   "ch.qos.logback" % "logback-classic" % "1.2.3",
 
   "com.typesafe.akka" %% "akka-actor" % akkaVersion,
+  "com.newmotion" %% "akka-rabbitmq" % "5.0.2",
 
   "com.typesafe.slick" %% "slick" % "3.2.1",
   "com.typesafe.slick" %% "slick-hikaricp" % "3.2.1",

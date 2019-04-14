@@ -1,10 +1,10 @@
 package pl.kurzawski.approving
 
-import java.util.concurrent.{ScheduledThreadPoolExecutor, TimeUnit}
-
-import akka.actor.ActorSystem
+import akka.actor.{ActorRef, ActorSystem}
+import com.newmotion.akka.rabbitmq._
 import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.StrictLogging
+import pl.kurzawski.approving.amqp.AmqpUtils
 import pl.kurzawski.approving.db.DbUpdater
 import slick.jdbc.JdbcBackend.Database
 
@@ -14,18 +14,15 @@ import scala.concurrent.ExecutionContextExecutor
 object Main extends App with StrictLogging {
 
   val config = ConfigFactory.load
-  implicit val actorSystem: ActorSystem = ActorSystem("system", config)
-  implicit val ec: ExecutionContextExecutor = actorSystem.dispatcher
+  implicit val system: ActorSystem = ActorSystem("system", config)
+  implicit val ec: ExecutionContextExecutor = system.dispatcher
+
+  val factory = new ConnectionFactory()
+  val connectionActor: ActorRef = system.actorOf(ConnectionActor.props(factory), "akka-rabbitmq")
 
   val db: Database = Database.forConfig("db", config)
   val dbUpdater = new DbUpdater(db)
+  AmqpUtils.setupConsumer(connectionActor, "queue", "amq.fanout", dbUpdater.approveReviews)
 
   logger.info(s"Approving reviews service started")
-
-  val ex = new ScheduledThreadPoolExecutor(2)
-  val task = new Runnable {
-    def run() = dbUpdater.approveReviews
-  }
-
-  ex.scheduleAtFixedRate(task, 0, 30, TimeUnit.SECONDS)
 }

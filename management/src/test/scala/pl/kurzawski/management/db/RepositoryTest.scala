@@ -1,8 +1,9 @@
 package pl.kurzawski.management.db
 
 import akka.Done
-import akka.actor.ActorSystem
+import akka.actor.{ActorRef, ActorSystem}
 import akka.stream.ActorMaterializer
+import akka.testkit.TestProbe
 import com.typesafe.config.ConfigFactory
 import org.scalatest.{AsyncFlatSpec, BeforeAndAfterAll, Matchers}
 import pl.kurzawski.management.db.CustomPostgresProfile.api._
@@ -34,7 +35,9 @@ class RepositoryTest extends AsyncFlatSpec with BeforeAndAfterAll with Matchers 
 
   private val config = ConfigFactory.parseString(configStr)
   private val db = Database.forConfig("db", config)
-  val repo: Repository = new Repository(db)
+  val probe = TestProbe()
+  val channelActor: ActorRef = probe.ref
+  val repo: Repository = new Repository(db, channelActor)
 
   override def beforeAll(): Unit = {
     repo.createTablesIfNotExist()
