@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 echo Running postgresql docker container
-docker run -d --name moviespgs -p 6789:5432 -e POSTGRES_PASSWORD=admin -e POSTGRES_USER=admin -e POSTGRES_DB=movies postgres:9.6
+docker run -d --name moviespgs -p 6789:5432 -e POSTGRES_PASSWORD=admin -e POSTGRES_USER=admin -e POSTGRES_DB=movies postgres
 
 # Tests if the database is ready, the check is aborted after 1000 tries.
 it=0

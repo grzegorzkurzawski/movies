@@ -18,6 +18,7 @@ object Main extends App with StrictLogging {
   implicit val ec: ExecutionContextExecutor = system.dispatcher
 
   val factory = new ConnectionFactory()
+  factory.setHost("movies_rmq")
   val connectionActor: ActorRef = system.actorOf(ConnectionActor.props(factory), "akka-rabbitmq")
 
   val db: Database = Database.forConfig("db", config)

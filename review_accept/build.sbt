@@ -15,7 +15,7 @@ libraryDependencies ++= Seq(
 
   "com.typesafe.slick" %% "slick" % "3.2.1",
   "com.typesafe.slick" %% "slick-hikaricp" % "3.2.1",
-  "com.github.tminglei" %% "slick-pg" % "0.17.2",
+  "com.github.tminglei" %% "slick-pg" % "0.17.2"
 )
 
 enablePlugins(JavaServerAppPackaging)

@@ -9,6 +9,7 @@ object AmqpUtils {
     connectionActor ! CreateChannel(ChannelActor.props(setupSubscriber(queue, exchange, f, _, _)), Some("subscriber"))
 
   private def setupSubscriber(queue: String, exchange: String, f: Int => Unit, channel: Channel, self: ActorRef) = {
+    channel.queueDeclare(queue, false, false, false, null)
     channel.queueBind(queue, exchange, "")
     val consumer = new DefaultConsumer(channel) {
       override def handleDelivery(consumerTag: String, envelope: Envelope, properties: BasicProperties, body: Array[Byte]) {
