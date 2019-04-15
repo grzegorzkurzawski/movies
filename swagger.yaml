@@ -5,7 +5,7 @@ info:
 paths:
   /movies:
     get:
-      summary: Returns list of movies
+      summary: Returns list of movies sorted by the rating
       tags:
         - Movies management
       responses:
@@ -41,7 +41,7 @@ paths:
             schema:
               $ref: '#/components/schemas/NewMovie'
         required: true
-  '/movies/{movieID}':
+  /movies/{movieID}:
     delete:
       summary: Deletes a specific movie and all its reviews
       tags:
@@ -51,7 +51,7 @@ paths:
       responses:
         '204':
           description: Successful Deletion
-  '/movies/{movieID}/review':
+  /movies/{movieID}/review:
     post:
       summary: Create a new review for the movie
       tags:

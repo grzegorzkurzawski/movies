@@ -13,3 +13,9 @@ User can:
 `curl -X DELETE http://localhost:9000/movies/1`
 
 More information in [Swaggger file](swagger.yaml)
+
+**How does it work?**
+
+Movies management service handles all API calls, when new review is published,
+the service publishes ID of the review on a RabbitMq queue. Review approving service
+consumes review IDs and approves proper reviews.
