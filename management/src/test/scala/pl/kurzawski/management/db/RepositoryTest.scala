@@ -2,10 +2,12 @@ package pl.kurzawski.management.db
 
 import akka.Done
 import akka.actor.{ActorRef, ActorSystem}
-import akka.stream.ActorMaterializer
 import akka.testkit.TestProbe
 import com.typesafe.config.ConfigFactory
-import org.scalatest.{AsyncFlatSpec, BeforeAndAfterAll, Matchers}
+import org.scalatest.flatspec.AsyncFlatSpec
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.BeforeAndAfterAll
+import org.testcontainers.containers.PostgreSQLContainer
 import pl.kurzawski.management.db.CustomPostgresProfile.api._
 import pl.kurzawski.management.db.Tables._
 import pl.kurzawski.management.db.model.ReviewRecord
@@ -17,19 +19,17 @@ import scala.concurrent.{ExecutionContextExecutor, Future}
 class RepositoryTest extends AsyncFlatSpec with BeforeAndAfterAll with Matchers {
 
   private implicit val actorSystem: ActorSystem = ActorSystem()
-  private implicit val materializer: ActorMaterializer = ActorMaterializer()
   private implicit val ec: ExecutionContextExecutor = actorSystem.dispatcher
 
-  private val dbURL = s"jdbc:postgresql://localhost:6789/movies"
-  private val dbUser = "admin"
-  private val dbPwd = "admin"
+  val postgreSQLContainer = new PostgreSQLContainer("postgres:14.1")
+  postgreSQLContainer.start()
 
   private val configStr =
     s"""
        |db {
-       |url = "$dbURL"
-       |user = $dbUser
-       |password = $dbPwd
+       |url = "${postgreSQLContainer.getJdbcUrl}"
+       |user = ${postgreSQLContainer.getUsername}
+       |password = ${postgreSQLContainer.getPassword}
        |}
      """.stripMargin
 

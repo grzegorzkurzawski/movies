@@ -8,7 +8,8 @@ import akka.http.scaladsl.testkit.ScalatestRouteTest
 import akka.util.ByteString
 import org.joda.time.{DateTime, DateTimeZone}
 import org.mockito.MockitoSugar
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import pl.kurzawski.management.db.Repository
 import pl.kurzawski.management.db.model.{MovieRecord, ReviewRecord}
 import pl.kurzawski.management.model.{Movie, Movies}
@@ -16,7 +17,7 @@ import pl.kurzawski.management.util.DataContext._
 
 import scala.concurrent.Future
 
-class ManagementAPITest extends WordSpec with ScalatestRouteTest with MockitoSugar with Matchers {
+class ManagementAPITest extends AnyWordSpec with ScalatestRouteTest with MockitoSugar with Matchers {
 
   val repo: Repository = mock[Repository]
   val api = new ManagementAPI(repo)
