@@ -1,7 +1,5 @@
-import scala.sys.process._
-
 name := "movies-management"
-scalaVersion := "2.12.7"
+scalaVersion := "2.13.8"
 organization := "pl.kurzawski"
 
 val akkaVersion = "2.6.18"
@@ -10,7 +8,7 @@ val slickVersion = "3.3.3"
 
 lazy val root = project in file(".")
 
-ThisBuild/scalacOptions ++= Seq("-unchecked", "-deprecation")
+ThisBuild / scalacOptions ++= Seq("-unchecked", "-deprecation")
 
 libraryDependencies ++= Seq(
   "com.typesafe.scala-logging" %% "scala-logging" % "3.9.4",
