@@ -2,7 +2,6 @@ package pl.kurzawski.management
 
 import akka.actor.{ActorRef, ActorSystem}
 import akka.http.scaladsl.Http
-import akka.stream.ActorMaterializer
 import com.newmotion.akka.rabbitmq._
 import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.StrictLogging
@@ -16,7 +15,6 @@ import scala.concurrent.ExecutionContextExecutor
 object Main extends App with StrictLogging {
 
   implicit val system: ActorSystem = ActorSystem()
-  implicit val materializer: ActorMaterializer = ActorMaterializer()
   implicit val ec: ExecutionContextExecutor = system.dispatcher
 
   val factory = new ConnectionFactory()
@@ -32,7 +30,7 @@ object Main extends App with StrictLogging {
   // Server
   val http = Http()
   val managementApi = new ManagementAPI(repo)
-  val bindingFuture = http.bindAndHandle(managementApi.routes, "0.0.0.0", 9000)
+  val bindingFuture = http.newServerAt("0.0.0.0", 9000).bind(managementApi.routes)
 
   logger.info(s"Starting server at http://0.0.0.0:9000")
 
