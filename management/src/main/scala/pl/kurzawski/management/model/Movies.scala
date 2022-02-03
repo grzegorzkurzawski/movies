@@ -1,10 +1,11 @@
 package pl.kurzawski.management.model
 
-import org.joda.time.DateTime
 import pl.kurzawski.management.util.JsonProtocol._
 import spray.json.RootJsonFormat
 
-case class Movie(id: Int, title: String, rating: Double, director: String, actors: List[String], createdAt: DateTime)
+import java.time.Instant
+
+case class Movie(id: Int, title: String, rating: Double, director: String, actors: List[String], createdAt: Instant)
 
 case class Movies(data: Seq[Movie])
 

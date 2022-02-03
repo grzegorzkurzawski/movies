@@ -1,9 +1,10 @@
 package pl.kurzawski.management.db
 
-import org.joda.time.DateTime
 import pl.kurzawski.management.db.CustomPostgresProfile.api._
 import pl.kurzawski.management.db.model.{MovieRecord, ReviewRecord}
 import slick.lifted.{ForeignKeyQuery, ProvenShape}
+
+import java.time.Instant
 
 object Tables {
 
@@ -18,7 +19,7 @@ object Tables {
     def title: Rep[String] = column[String]("title")
     def director: Rep[String] = column[String]("director")
     def actors: Rep[List[String]] = column[List[String]]("actors")
-    def createdAt: Rep[DateTime] = column[DateTime]("created_at")
+    def createdAt: Rep[Instant] = column[Instant]("created_at")
     def * : ProvenShape[MovieRecord] = (id, title, director, actors, createdAt) <> ((MovieRecord.apply _).tupled, MovieRecord.unapply)
   }
 
