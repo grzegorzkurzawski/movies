@@ -5,9 +5,9 @@ import spray.json.RootJsonFormat
 
 import java.time.Instant
 
-case class Movie(id: Int, title: String, rating: Double, director: String, actors: List[String], createdAt: Instant)
+final case class Movie(id: Int, title: String, rating: Double, director: String, actors: List[String], createdAt: Instant)
 
-case class Movies(data: Seq[Movie])
+final case class Movies(data: Seq[Movie])
 
 object Movies {
   implicit val movieFormat: RootJsonFormat[Movie] = jsonFormat6(Movie.apply)
