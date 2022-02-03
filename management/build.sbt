@@ -21,9 +21,6 @@ libraryDependencies ++= Seq(
   "com.typesafe.slick" %% "slick" % slickVersion,
   "com.typesafe.slick" %% "slick-hikaricp" % slickVersion,
   "com.github.tminglei" %% "slick-pg" % "0.20.2",
-  "com.github.tototoshi" %% "slick-joda-mapper" % "2.5.0",
-  "joda-time" % "joda-time" % "2.10.13",
-  "org.joda" % "joda-convert" % "2.2.2",
   "com.newmotion" %% "akka-rabbitmq" % "6.0.0",
 
   "org.scalatest" %% "scalatest" % "3.2.11" % Test,

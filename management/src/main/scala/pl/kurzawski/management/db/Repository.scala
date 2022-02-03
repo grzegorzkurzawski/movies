@@ -4,7 +4,6 @@ import akka.Done
 import akka.actor.ActorRef
 import com.newmotion.akka.rabbitmq.ChannelMessage
 import com.typesafe.scalalogging.StrictLogging
-import org.joda.time.{DateTime, DateTimeZone}
 import pl.kurzawski.management.db.CustomPostgresProfile.api._
 import pl.kurzawski.management.db.Tables._
 import pl.kurzawski.management.db.model.{MovieRecord, ReviewRecord}
@@ -14,6 +13,7 @@ import slick.jdbc.GetResult
 import slick.jdbc.JdbcBackend.Database
 import slick.jdbc.meta.MTable
 
+import java.time.Instant
 import scala.concurrent.duration._
 import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.language.postfixOps
@@ -23,12 +23,12 @@ class Repository(val db: Database, channelActor: ActorRef)(implicit ex: Executio
   implicit val getMovieResult: GetResult[Movie] =
     GetResult( result =>
       Movie(
-        result.nextInt,
-        result.nextString,
-        result.nextDouble,
-        result.nextString,
-        result.nextArray.toList,
-        new DateTime(result.nextTimestamp.getTime, DateTimeZone.UTC),
+        result.nextInt(),
+        result.nextString(),
+        result.nextDouble(),
+        result.nextString(),
+        result.nextArray().toList,
+        Instant.ofEpochMilli(result.nextTimestamp().getTime)
       )
     )
 
@@ -56,7 +56,7 @@ class Repository(val db: Database, channelActor: ActorRef)(implicit ex: Executio
     db.run(moviesTable.filter(_.id === id).result).map(_.nonEmpty)
 
   def insertMovie(movie: PostMovie): Future[MovieRecord] = {
-    val moviesRecord = MovieRecord(0, movie.title, movie.director, movie.actors, DateTime.now)
+    val moviesRecord = MovieRecord(0, movie.title, movie.director, movie.actors, Instant.now)
     db.run(moviesTable.returning(moviesTable) += moviesRecord)
   }
 

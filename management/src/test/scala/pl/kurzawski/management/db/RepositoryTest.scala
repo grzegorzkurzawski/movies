@@ -4,9 +4,9 @@ import akka.Done
 import akka.actor.{ActorRef, ActorSystem}
 import akka.testkit.TestProbe
 import com.typesafe.config.ConfigFactory
+import org.scalatest.BeforeAndAfterAll
 import org.scalatest.flatspec.AsyncFlatSpec
 import org.scalatest.matchers.should.Matchers
-import org.scalatest.BeforeAndAfterAll
 import org.testcontainers.containers.PostgreSQLContainer
 import pl.kurzawski.management.db.CustomPostgresProfile.api._
 import pl.kurzawski.management.db.Tables._

@@ -6,7 +6,6 @@ import akka.http.scaladsl.model.{HttpEntity, MediaTypes, StatusCodes}
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import akka.util.ByteString
-import org.joda.time.{DateTime, DateTimeZone}
 import org.mockito.MockitoSugar
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -15,6 +14,7 @@ import pl.kurzawski.management.db.model.{MovieRecord, ReviewRecord}
 import pl.kurzawski.management.model.{Movie, Movies}
 import pl.kurzawski.management.util.DataContext._
 
+import java.time.Instant
 import scala.concurrent.Future
 
 class ManagementAPITest extends AnyWordSpec with ScalatestRouteTest with MockitoSugar with Matchers {
@@ -22,8 +22,8 @@ class ManagementAPITest extends AnyWordSpec with ScalatestRouteTest with Mockito
   val repo: Repository = mock[Repository]
   val api = new ManagementAPI(repo)
 
-  val movie = Movie(1, "title", 1.0, "Hopkins", List("Pitt", "Jolie"), DateTime.now(DateTimeZone.UTC))
-  val movieRecord = MovieRecord(1, "title", "Hopkins", List("Pitt", "Jolie"), DateTime.now(DateTimeZone.UTC))
+  val movie = Movie(1, "title", 1.0, "Hopkins", List("Pitt", "Jolie"), Instant.now)
+  val movieRecord = MovieRecord(1, "title", "Hopkins", List("Pitt", "Jolie"), Instant.now)
   val movies = Movies(Seq(movie))
 
   "GET /movies" should {
