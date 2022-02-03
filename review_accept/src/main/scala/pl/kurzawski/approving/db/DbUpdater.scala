@@ -10,7 +10,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class DbUpdater(db: Database)(implicit ex: ExecutionContext) extends StrictLogging {
 
-  def UpdateQuery(id: Int): DBIO[Int] = sqlu"UPDATE reviews SET accepted = true WHERE id = $id;"
+  private def updateQuery(id: Int): DBIO[Int] = sqlu"UPDATE reviews SET accepted = true WHERE id = $id;"
 
-  def approveReviews(id: Int): Future[Done] = db.run(UpdateQuery(id)).map(_ => Done)
+  def approveReviews(id: Int): Future[Done] = db.run(updateQuery(id)).map(_ => Done)
 }

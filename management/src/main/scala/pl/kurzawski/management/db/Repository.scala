@@ -21,7 +21,7 @@ import scala.language.postfixOps
 class Repository(val db: Database, channelActor: ActorRef)(implicit ex: ExecutionContext) extends StrictLogging {
 
   implicit val getMovieResult: GetResult[Movie] =
-    GetResult( result =>
+    GetResult { result =>
       Movie(
         result.nextInt(),
         result.nextString(),
@@ -30,7 +30,7 @@ class Repository(val db: Database, channelActor: ActorRef)(implicit ex: Executio
         result.nextArray().toList,
         Instant.ofEpochMilli(result.nextTimestamp().getTime)
       )
-    )
+    }
 
   private val selectMovies: DBIO[Seq[Movie]] =
     sql"""
